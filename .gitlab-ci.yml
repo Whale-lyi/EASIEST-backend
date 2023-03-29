@@ -1,0 +1,36 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  tags:
+    - se3
+  script:
+    - mvn clean package -D maven.test.skip=true
+  artifacts:
+    paths:
+      - target/SentiStrength-backend-0.0.1-SNAPSHOT.jar
+
+deploy-master:
+  stage: deploy
+  tags:
+    - se3
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  when: manual
+  script:
+    - cd target
+    - mv SentiStrength-backend-0.0.1-SNAPSHOT.jar /usr/local/backend/Senti-backend-master.jar
+    - nohup java -jar Senti-backend-master.jar >log-master.txt &
+
+deploy-dev:
+  stage: deploy
+  tags:
+    - se3
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+  script:
+    - cd target
+    - mv SentiStrength-backend-0.0.1-SNAPSHOT.jar /usr/local/backend/Senti-backend-dev.jar
+    - nohup java -jar Senti-backend-dev.jar >log-dev.txt &
