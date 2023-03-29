@@ -20,13 +20,20 @@ public class SentiController {
     /**
      * 该方法仅用于测试连接和jar包的使用
      */
-    @GetMapping("/test")
+    @GetMapping("/conn-test")
     public Result<String> testConn() {
+        return Result.buildSuccess("Hello SentiStrength");
+    }
+
+    /**
+     * 该方法仅用于测试jar包的使用
+     */
+    @GetMapping("/jar-test")
+    public Result<String> testSentiStrength(@RequestParam("text") String text) {
         SentiStrength sentiStrength = new SentiStrength();
         String[] ssthInitialisation = {"sentidata", "./src/main/resources/SentStrength_Data/", "explain"};
         sentiStrength.initialise(ssthInitialisation);
-        log.info(sentiStrength.computeSentimentScores("I hate frogs."));
-        return Result.buildSuccess("Hello SentiStrength");
+        return Result.buildSuccess(sentiStrength.computeSentimentScores(text));
     }
 
 }
