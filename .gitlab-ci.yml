@@ -21,8 +21,8 @@ deploy-master:
   when: manual
   script:
     - cd target
-    - mv SentiStrength-backend-0.0.1-SNAPSHOT.jar /usr/local/backend/Senti-backend-master.jar
-    - cd /usr/local/backend
+    - cp SentiStrength-backend-0.0.1-SNAPSHOT.jar /home/lighthouse/backend/Senti-backend-master.jar
+    - cd /home/lighthouse/backend
     - nohup java -jar Senti-backend-master.jar >log-master.txt &
 
 deploy-dev:
@@ -33,6 +33,6 @@ deploy-dev:
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
   script:
     - cd target
-    - mv SentiStrength-backend-0.0.1-SNAPSHOT.jar /usr/local/backend/Senti-backend-dev.jar
-    - cd /usr/local/backend
+    - cp SentiStrength-backend-0.0.1-SNAPSHOT.jar /home/lighthouse/backend/Senti-backend-dev.jar
+    - cd /home/lighthouse/backend
     - nohup java -jar Senti-backend-dev.jar >log-dev.txt &
