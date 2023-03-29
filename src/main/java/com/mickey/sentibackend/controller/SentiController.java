@@ -34,7 +34,7 @@ public class SentiController {
         // 本地情绪字典
 //        String[] ssthInitialisation = {"sentidata", "./src/main/resources/SentStrength_Data/", "explain"};
         // 服务器字典路径
-        String[] ssthInitialisation = {"sentidata", "/home/lighthouse/SentStrength_Data", "explain"};
+        String[] ssthInitialisation = {"sentidata", "/home/lighthouse/SentStrength_Data/", "explain"};
         sentiStrength.initialise(ssthInitialisation);
         return Result.buildSuccess(sentiStrength.computeSentimentScores(text));
     }
