@@ -22,8 +22,8 @@ public class SentiService {
         ArrayList<String> paramList = new ArrayList<>();
         // 添加字典
         paramList.add("sentidata");
-        paramList.add("./src/main/resources/SentStrength_Data/");
-//        paramList.add("/home/lighthouse/SentStrength_Data/");
+//        paramList.add("./src/main/resources/SentStrength_Data/");
+        paramList.add("/home/lighthouse/SentStrength_Data/");
         // 添加模式
         if (!addTypeParam(paramList, type)) {
             throw new SentiException(1, "分析模式参数错误");

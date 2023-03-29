@@ -1,7 +1,6 @@
 package com.mickey.sentibackend.controller;
 
 import com.mickey.sentibackend.entity.Result;
-import com.mickey.sentibackend.exception.SentiException;
 import com.mickey.sentibackend.service.SentiService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
