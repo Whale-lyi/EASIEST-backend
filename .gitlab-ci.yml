@@ -23,7 +23,7 @@ deploy-master:
     - cd target
     - cp SentiStrength-backend-0.0.1-SNAPSHOT.jar /home/lighthouse/backend/Senti-backend-master.jar
     - cd /home/lighthouse/backend
-    - nohup java -jar Senti-backend-master.jar >/dev/null 2>&1 &
+    - sh init-dev.sh restart
 
 deploy-dev:
   stage: deploy
@@ -35,4 +35,4 @@ deploy-dev:
     - cd target
     - cp SentiStrength-backend-0.0.1-SNAPSHOT.jar /home/lighthouse/backend/Senti-backend-dev.jar
     - cd /home/lighthouse/backend
-    - nohup java -jar Senti-backend-dev.jar >/dev/null 2>&1 &
+    - sh init-master.sh restart
