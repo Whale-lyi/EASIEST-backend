@@ -31,7 +31,10 @@ public class SentiController {
     @GetMapping("/jar-test")
     public Result<String> testSentiStrength(@RequestParam("text") String text) {
         SentiStrength sentiStrength = new SentiStrength();
-        String[] ssthInitialisation = {"sentidata", "./src/main/resources/SentStrength_Data/", "explain"};
+        // 本地情绪字典
+//        String[] ssthInitialisation = {"sentidata", "./src/main/resources/SentStrength_Data/", "explain"};
+        // 服务器字典路径
+        String[] ssthInitialisation = {"sentidata", "/home/lighthouse/SentStrength_Data", "explain"};
         sentiStrength.initialise(ssthInitialisation);
         return Result.buildSuccess(sentiStrength.computeSentimentScores(text));
     }
