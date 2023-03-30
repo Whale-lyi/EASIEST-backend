@@ -59,7 +59,7 @@ public class SentiController {
      * @return 分析结果
      */
     @PostMapping("/file")
-    public HttpServletResponse analyzeFile(@RequestParam("file") MultipartFile file,
+    public Result<HttpServletResponse> analyzeFile(@RequestParam("file") MultipartFile file,
                                              @RequestParam("type") String type,
                                              @RequestParam("explain") Boolean explain,
                                              @RequestParam("textcol") String textcol,
@@ -85,7 +85,7 @@ public class SentiController {
         outputStream.close();
         //删除服务器上的临时文件
         outputFile.delete();
-        return response;
+        return Result.buildSuccess(response);
     }
 
     /**
