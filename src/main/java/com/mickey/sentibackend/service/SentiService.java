@@ -95,7 +95,14 @@ public class SentiService {
         // 列表转数组初始化
         String[] initArray = paramList.toArray(new String[0]);
         sentiStrength.initialiseAndRun(initArray);
-        return FileOps.s_ChopFileNameExtension(path) + "_classID.txt";
+        String outputPath = FileOps.s_ChopFileNameExtension(path) + "_classID.txt";
+        BufferedReader br = new BufferedReader(new FileReader(outputPath));
+        StringBuilder res = new StringBuilder();
+        while((br.readLine()) != null) {
+            String s = br.readLine();
+            res.append(s).append("\n");
+        }
+        return res.toString();
     }
 
     /**
