@@ -2,6 +2,7 @@ package com.mickey.sentibackend.controller;
 
 import com.mickey.sentibackend.entity.Result;
 import com.mickey.sentibackend.service.SentiService;
+import com.mickey.sentibackend.exception.SentiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,11 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.wlv.sentistrength.SentiStrength;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.URLEncoder;
-import java.nio.file.Files;
+import java.io.IOException;
+
 
 @RestController
 @RequestMapping("/api/v1")
@@ -61,7 +59,7 @@ public class SentiController {
                                              @RequestParam("type") String type,
                                              @RequestParam("explain") Boolean explain,
                                              @RequestParam("textcol") String textcol,
-                                             @RequestParam("idcol") String idcol) throws IOException {
+                                             @RequestParam("idcol") String idcol) {
         String res = sentiService.analyzeFile(file, type, explain, textcol, idcol);
         return Result.buildSuccess(res);
     }

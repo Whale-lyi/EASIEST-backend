@@ -52,7 +52,7 @@ public class SentiService {
      * @param idcol id所在列
      * @return 输出文件路径
      */
-    public String analyzeFile(MultipartFile file, String type, Boolean explain, String textcol, String idcol) throws IOException {
+    public String analyzeFile(MultipartFile file, String type, Boolean explain, String textcol, String idcol) {
         String filename = file.getOriginalFilename();
         String upload = "src/main/resources/upload";
 
@@ -65,10 +65,12 @@ public class SentiService {
         }
         String path = upload + filename;
         File filePath = new File(path);
-        BufferedOutputStream outputStream = new BufferedOutputStream(Files.newOutputStream(filePath.toPath()));
-        outputStream.write(file.getBytes());
-        outputStream.flush();
-        outputStream.close();
+        try (BufferedOutputStream outputStream = new BufferedOutputStream(Files.newOutputStream(filePath.toPath()))) {
+            outputStream.write(file.getBytes());
+            outputStream.flush();
+        } catch (IOException e) {
+            throw new SentiException(1, "输入文件读取失败");
+        }
         SentiStrength sentiStrength = new SentiStrength();
         ArrayList<String> paramList = new ArrayList<>();
         // 添加字典
@@ -96,11 +98,15 @@ public class SentiService {
         String[] initArray = paramList.toArray(new String[0]);
         sentiStrength.initialiseAndRun(initArray);
         String outputPath = FileOps.s_ChopFileNameExtension(path) + "_classID.txt";
-        BufferedReader br = new BufferedReader(new FileReader(outputPath));
-        StringBuilder res = new StringBuilder();
-        while((br.readLine()) != null) {
-            String s = br.readLine();
-            res.append(s).append("\n");
+        StringBuilder res;
+        try (BufferedReader br = new BufferedReader(new FileReader(outputPath))) {
+            res = new StringBuilder();
+            while ((br.readLine()) != null) {
+                String s = br.readLine();
+                res.append(s).append("\n");
+            }
+        } catch (IOException e) {
+            throw new SentiException(1, "输出文件读取失败");
         }
         return res.toString();
     }
