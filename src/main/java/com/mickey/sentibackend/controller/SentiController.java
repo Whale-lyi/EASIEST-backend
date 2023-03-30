@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import uk.ac.wlv.sentistrength.SentiStrength;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -48,20 +49,23 @@ public class SentiController {
      * @param file 待分析文件
      * @param type 分析模式
      * @param explain 是否需要解释
-     * @param textcol 文本所在列
-     * @param idcol id所在列
-     * @param request HTTP请求
+     * @param annotatecol 需要分析评注的文本列
      * @return 分析结果
      */
     @PostMapping("/file")
-    public Result<String> analyzeFile(@RequestParam MultipartFile file,
+    public Result<String> analyzeFile(@RequestParam("file") MultipartFile file,
                                       @RequestParam("type") String type,
                                       @RequestParam("explain") Boolean explain,
-                                      @RequestParam("textcol") String textcol,
-                                      @RequestParam("idcol") String idcol,
+                                      @RequestParam("annotatecol") String annotatecol,
                                       HttpServletRequest request) {
-        String path = request.getServletContext().getRealPath("upload/");
-        String res = sentiService.analyzeFile(file, type, explain, textcol, idcol, path);
+        String upload = request.getSession().getServletContext().getRealPath("upload");
+        File createFile = new File(upload);
+        //判断上传文件的保存目录是否存在
+        if (!createFile.exists()) {
+            //创建目录
+            createFile.mkdirs();
+        }
+        String res = sentiService.analyzeFile(file, type, explain, annotatecol, upload);
         return Result.buildSuccess(res);
     }
 

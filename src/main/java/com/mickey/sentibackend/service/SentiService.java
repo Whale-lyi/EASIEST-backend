@@ -48,28 +48,17 @@ public class SentiService {
      * @param file 待分析文件
      * @param type 分析模式
      * @param explain 是否需要解释
-     * @param textcol 文本所在列
-     * @param idcol id所在列
-     * @param tmpPath 临时存储上传文件的文件夹路径
+     * @param annotatecol 需要分析评注的文本列
      * @return 输出文件路径
      */
-    public String analyzeFile(MultipartFile file, String type, Boolean explain, String textcol, String idcol, String tmpPath) {
+    public String analyzeFile(MultipartFile file, String type, Boolean explain, String annotatecol, String upload) {
         String filename = file.getOriginalFilename();
-
-        File fileDir = new File(tmpPath);
-        File[] files = fileDir.listFiles();
-        if (files != null) {
-            for (File f : files) {
-                f.delete();
-            }
-        }
-        String path = tmpPath + filename;
+        String path = upload + "/" + filename;
         File filePath = new File(path);
-        try (BufferedOutputStream outputStream = new BufferedOutputStream(Files.newOutputStream(filePath.toPath()))) {
-            outputStream.write(file.getBytes());
-            outputStream.flush();
+        try {
+            file.transferTo(filePath);
         } catch (IOException e) {
-            throw new SentiException(1, "输入文件读取失败");
+            throw new SentiException(1, e.getMessage());
         }
         SentiStrength sentiStrength = new SentiStrength();
         ArrayList<String> paramList = new ArrayList<>();
@@ -78,13 +67,9 @@ public class SentiService {
         paramList.add("/home/lighthouse/SentStrength_Data/");
         paramList.add("input");
         paramList.add(path);
-        if (textcol != null && !textcol.equals("")) {
-            paramList.add("textcol");
-            paramList.add(textcol);
-        }
-        if (idcol != null && !idcol.equals("")) {
-            paramList.add("idcol");
-            paramList.add(idcol);
+        if (annotatecol != null && !annotatecol.equals("")) {
+            paramList.add("annotatecol");
+            paramList.add(annotatecol);
         }
         // 添加模式
         if (!addTypeParam(paramList, type)) {
@@ -94,19 +79,19 @@ public class SentiService {
         if (explain) {
             paramList.add("explain");
         }
+        paramList.add("overwrite");
         // 列表转数组初始化
         String[] initArray = paramList.toArray(new String[0]);
         sentiStrength.initialiseAndRun(initArray);
-        String outputPath = FileOps.s_ChopFileNameExtension(path) + "_classID.txt";
         StringBuilder res;
-        try (BufferedReader br = new BufferedReader(new FileReader(outputPath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             res = new StringBuilder();
             while ((br.readLine()) != null) {
                 String s = br.readLine();
                 res.append(s).append("\n");
             }
         } catch (IOException e) {
-            throw new SentiException(1, "输出文件读取失败");
+            throw new SentiException(1, e.getMessage());
         }
         return res.toString();
     }
