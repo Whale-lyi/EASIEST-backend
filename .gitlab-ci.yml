@@ -1,5 +1,6 @@
 stages:
   - build
+  - release
   - deploy
 
 build:
@@ -11,6 +12,28 @@ build:
   artifacts:
     paths:
       - target/SentiStrength-backend-0.0.1-SNAPSHOT.jar
+
+release:
+  stage: release
+  tags:
+    - se3
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+#    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+    - ossutil --config-file /home/lighthouse/.ossutilconfig cp target/SentiStrength-backend-0.0.1-SNAPSHOT.jar oss://whale-picture/se3/backend/Senti-backend-v0.0.$CI_PIPELINE_IID.jar
+  artifacts:
+    paths:
+      - target/SentiStrength-backend-0.0.1-SNAPSHOT.jar
+  release:
+    tag_name: 'v0.0.$CI_PIPELINE_IID'
+    description: 'v0.0.$CI_PIPELINE_IID'
+    ref: '$CI_COMMIT_SHA'
+    assets:
+      links:
+        - name: 'Senti-backend-v0.0.$CI_PIPELINE_IID.jar'
+          url: 'https://whale-picture.oss-cn-hangzhou.aliyuncs.com/se3/backend/Senti-backend-v0.0.$CI_PIPELINE_IID.jar'
 
 deploy-master:
   stage: deploy
