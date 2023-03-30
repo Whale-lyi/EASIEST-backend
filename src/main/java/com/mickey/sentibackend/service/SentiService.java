@@ -58,12 +58,13 @@ public class SentiService {
         try {
             file.transferTo(filePath);
         } catch (IOException e) {
-            throw new SentiException(1, e.getMessage());
+            throw new SentiException(1, "输入文件读取失败");
         }
         SentiStrength sentiStrength = new SentiStrength();
         ArrayList<String> paramList = new ArrayList<>();
         // 添加字典
         paramList.add("sentidata");
+//        paramList.add("./src/main/resources/SentStrength_Data/");
         paramList.add("/home/lighthouse/SentStrength_Data/");
         paramList.add("input");
         paramList.add(path);
@@ -86,12 +87,12 @@ public class SentiService {
         StringBuilder res;
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             res = new StringBuilder();
-            while ((br.readLine()) != null) {
-                String s = br.readLine();
+            String s = "";
+            while ((s = br.readLine()) != null) {
                 res.append(s).append("\n");
             }
         } catch (IOException e) {
-            throw new SentiException(1, e.getMessage());
+            throw new SentiException(1, "输出文件读取失败");
         }
         return res.toString();
     }
