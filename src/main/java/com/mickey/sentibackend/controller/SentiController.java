@@ -2,7 +2,6 @@ package com.mickey.sentibackend.controller;
 
 import com.mickey.sentibackend.entity.Result;
 import com.mickey.sentibackend.service.SentiService;
-import com.mickey.sentibackend.exception.SentiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,8 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.wlv.sentistrength.SentiStrength;
 
-import java.io.IOException;
-
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -52,15 +50,18 @@ public class SentiController {
      * @param explain 是否需要解释
      * @param textcol 文本所在列
      * @param idcol id所在列
+     * @param request HTTP请求
      * @return 分析结果
      */
     @PostMapping("/file")
     public Result<String> analyzeFile(@RequestParam MultipartFile file,
-                                             @RequestParam("type") String type,
-                                             @RequestParam("explain") Boolean explain,
-                                             @RequestParam("textcol") String textcol,
-                                             @RequestParam("idcol") String idcol) {
-        String res = sentiService.analyzeFile(file, type, explain, textcol, idcol);
+                                      @RequestParam("type") String type,
+                                      @RequestParam("explain") Boolean explain,
+                                      @RequestParam("textcol") String textcol,
+                                      @RequestParam("idcol") String idcol,
+                                      HttpServletRequest request) {
+        String path = request.getServletContext().getRealPath("upload/");
+        String res = sentiService.analyzeFile(file, type, explain, textcol, idcol, path);
         return Result.buildSuccess(res);
     }
 

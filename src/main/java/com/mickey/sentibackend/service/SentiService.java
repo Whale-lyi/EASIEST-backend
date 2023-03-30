@@ -50,20 +50,20 @@ public class SentiService {
      * @param explain 是否需要解释
      * @param textcol 文本所在列
      * @param idcol id所在列
+     * @param tmpPath 临时存储上传文件的文件夹路径
      * @return 输出文件路径
      */
-    public String analyzeFile(MultipartFile file, String type, Boolean explain, String textcol, String idcol) {
+    public String analyzeFile(MultipartFile file, String type, Boolean explain, String textcol, String idcol, String tmpPath) {
         String filename = file.getOriginalFilename();
-        String upload = "src/main/resources/upload";
 
-        File fileDir = new File(upload);
+        File fileDir = new File(tmpPath);
         File[] files = fileDir.listFiles();
         if (files != null) {
             for (File f : files) {
                 f.delete();
             }
         }
-        String path = upload + filename;
+        String path = tmpPath + filename;
         File filePath = new File(path);
         try (BufferedOutputStream outputStream = new BufferedOutputStream(Files.newOutputStream(filePath.toPath()))) {
             outputStream.write(file.getBytes());
