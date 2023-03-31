@@ -87,13 +87,26 @@ public class SentiService {
         StringBuilder res;
         if (Integer.parseInt(annotatecol) == 0) {
             File[] files = new File(upload).listFiles();
-            for (int i = files.length - 1; i >=0; i--) {
-                String name = files[i].getName();
-                if (name.contains("_out.txt")) {
-                    path = files[i].getAbsolutePath();
-                    break;
+            List<File> poss = new ArrayList<>();
+            List<Integer> possible = new ArrayList<>();
+            for (File f : files) {
+                String name = f.getName();
+                String extension = "_out.txt";
+                String chopExtension = FileOps.s_ChopFileNameExtension(filename);
+                if (name.contains(extension)) {
+                    poss.add(f);
+                    possible.add(Integer.parseInt(name.substring(chopExtension.length(), name.indexOf(extension))));
                 }
             }
+            int max = -1;
+            int index = -1;
+            for (int i = 0; i < poss.size(); i++) {
+                if (max < possible.get(i)) {
+                    max = possible.get(i);
+                    index = i;
+                }
+            }
+            path = poss.get(index).getAbsolutePath();
         }
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             res = new StringBuilder();
