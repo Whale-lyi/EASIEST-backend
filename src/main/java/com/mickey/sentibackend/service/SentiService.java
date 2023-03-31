@@ -64,8 +64,8 @@ public class SentiService {
         ArrayList<String> paramList = new ArrayList<>();
         // 添加字典
         paramList.add("sentidata");
-//        paramList.add("./src/main/resources/SentStrength_Data/");
-        paramList.add("/home/lighthouse/SentStrength_Data/");
+        paramList.add("./src/main/resources/SentStrength_Data/");
+//        paramList.add("/home/lighthouse/SentStrength_Data/");
         paramList.add("input");
         paramList.add(path);
         if (annotatecol != null && !annotatecol.equals("")) {
@@ -87,10 +87,10 @@ public class SentiService {
         StringBuilder res;
         if (Integer.parseInt(annotatecol) == 0) {
             File[] files = new File(upload).listFiles();
-            for (File f : files) {
-                String name = f.getName();
+            for (int i = files.length - 1; i >=0; i--) {
+                String name = files[i].getName();
                 if (name.contains("_out.txt")) {
-                    path = f.getAbsolutePath();
+                    path = files[i].getAbsolutePath();
                     break;
                 }
             }

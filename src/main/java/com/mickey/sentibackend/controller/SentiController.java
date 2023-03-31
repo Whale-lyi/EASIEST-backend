@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.wlv.sentistrength.SentiStrength;
+import uk.ac.wlv.utilities.FileOps;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -58,7 +59,8 @@ public class SentiController {
                                       @RequestParam("explain") Boolean explain,
                                       @RequestParam("annotatecol") String annotatecol,
                                       HttpServletRequest request) {
-        String upload = request.getSession().getServletContext().getRealPath("upload");
+        String filename = FileOps.s_ChopFileNameExtension(file.getOriginalFilename());
+        String upload = request.getSession().getServletContext().getRealPath(filename + "upload");
         File createFile = new File(upload);
         //判断上传文件的保存目录是否存在
         if (!createFile.exists()) {
