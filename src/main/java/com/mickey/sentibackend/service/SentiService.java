@@ -110,7 +110,7 @@ public class SentiService {
         }
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             res = new StringBuilder();
-            res.append(path).append("\n");
+//            res.append(path).append("\n");
             String s = "";
             while ((s = br.readLine()) != null) {
                 res.append(s).append("\n");
