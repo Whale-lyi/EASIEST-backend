@@ -7,7 +7,6 @@ import uk.ac.wlv.sentistrength.SentiStrength;
 import uk.ac.wlv.utilities.FileOps;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
