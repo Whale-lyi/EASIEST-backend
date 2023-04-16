@@ -32,8 +32,8 @@ public class SentiServiceImpl implements SentiService {
         ArrayList<String> paramList = new ArrayList<>();
         // 添加字典
         paramList.add("sentidata");
-        paramList.add("./src/main/resources/SentStrength_Data/");
-//        paramList.add("/home/lighthouse/SentStrength_Data/");
+//        paramList.add("./src/main/resources/SentStrength_Data/");
+        paramList.add("/home/lighthouse/SentStrength_Data/");
         // 添加模式与求值方案
         addTypeParam(paramList, type, paragraphMode, sentenceMode);
         // 添加解释
@@ -77,8 +77,8 @@ public class SentiServiceImpl implements SentiService {
         ArrayList<String> paramList = new ArrayList<>();
         // 添加字典
         paramList.add("sentidata");
-        paramList.add("./src/main/resources/SentStrength_Data/");
-//        paramList.add("/home/lighthouse/SentStrength_Data/");
+//        paramList.add("./src/main/resources/SentStrength_Data/");
+        paramList.add("/home/lighthouse/SentStrength_Data/");
         paramList.add("input");
         paramList.add(path);
         if (annotatecol != null && !annotatecol.equals("")) {
