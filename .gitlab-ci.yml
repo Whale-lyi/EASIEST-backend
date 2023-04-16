@@ -1,5 +1,6 @@
 stages:
   - build
+  - release
   - deploy
 
 build:
@@ -12,6 +13,28 @@ build:
     paths:
       - target/SentiStrength-backend-0.0.1-SNAPSHOT.jar
 
+release:
+  stage: release
+  tags:
+    - se3
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+    - ossutil --config-file /home/lighthouse/.ossutilconfig cp target/SentiStrength-backend-0.0.1-SNAPSHOT.jar oss://whale-picture/se3/backend/Senti-backend-v0.0.$CI_PIPELINE_IID.jar
+  artifacts:
+    paths:
+      - target/SentiStrength-backend-0.0.1-SNAPSHOT.jar
+  release:
+    tag_name: 'v0.0.$CI_PIPELINE_IID'
+    description: 'v0.0.$CI_PIPELINE_IID'
+    ref: '$CI_COMMIT_SHA'
+    assets:
+      links:
+        - name: 'Senti-backend-v0.0.$CI_PIPELINE_IID.jar'
+          url: 'https://whale-picture.oss-cn-hangzhou.aliyuncs.com/se3/backend/Senti-backend-v0.0.$CI_PIPELINE_IID.jar'
+
 deploy-master:
   stage: deploy
   tags:
@@ -21,8 +44,9 @@ deploy-master:
   when: manual
   script:
     - cd target
-    - mv SentiStrength-backend-0.0.1-SNAPSHOT.jar /usr/local/backend/Senti-backend-master.jar
-    - nohup java -jar Senti-backend-master.jar >log-master.txt &
+    - cp SentiStrength-backend-0.0.1-SNAPSHOT.jar /home/lighthouse/backend/Senti-backend-master.jar
+    - cd /home/lighthouse/backend
+    - sh init-master.sh restart
 
 deploy-dev:
   stage: deploy
@@ -32,5 +56,6 @@ deploy-dev:
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
   script:
     - cd target
-    - mv SentiStrength-backend-0.0.1-SNAPSHOT.jar /usr/local/backend/Senti-backend-dev.jar
-    - nohup java -jar Senti-backend-dev.jar >log-dev.txt &
+    - cp SentiStrength-backend-0.0.1-SNAPSHOT.jar /home/lighthouse/backend/Senti-backend-dev.jar
+    - cd /home/lighthouse/backend
+    - sh init-dev.sh restart
