@@ -23,7 +23,7 @@ public class SentiServiceTextTest {
      */
     @Test
     public void textSuccessTest1() {
-        String result = sentiService.analyzeText("I hate frogs.", "default", true);
+        String result = sentiService.analyzeText("I hate frogs.", "default", true, "max", "max");
         Assert.assertEquals("1 -4 I hate[-4] frogs .[sentence: 1,-4] [result: max + and - of any sentence][overall result = -1 as pos<-neg]", result);
     }
 
@@ -32,7 +32,7 @@ public class SentiServiceTextTest {
      */
     @Test
     public void textSuccessTest2() {
-        String result = sentiService.analyzeText("I hate frogs.", "default", false);
+        String result = sentiService.analyzeText("I hate frogs.", "default", false, "max", "max");
         Assert.assertEquals("1 -4", result);
     }
 
@@ -41,7 +41,7 @@ public class SentiServiceTextTest {
      */
     @Test
     public void textSuccessTest3() {
-        String result = sentiService.analyzeText("I hate frogs.", "trinary", true);
+        String result = sentiService.analyzeText("I hate frogs.", "trinary", true, "max", "max");
         Assert.assertEquals("1 -4 -1 I hate[-4] frogs .[sentence: 1,-4] [result: max + and - of any sentence][overall result = -1 as pos<-neg]", result);
     }
 
@@ -50,7 +50,7 @@ public class SentiServiceTextTest {
      */
     @Test
     public void textSuccessTest4() {
-        String result = sentiService.analyzeText("I hate frogs.", "binary", false);
+        String result = sentiService.analyzeText("I hate frogs.", "binary", false, "max", "max");
         Assert.assertEquals("1 -4 -1", result);
     }
 
@@ -59,7 +59,7 @@ public class SentiServiceTextTest {
      */
     @Test
     public void textSuccessTest5() {
-        String result = sentiService.analyzeText("I hate frogs.", "scale", true);
+        String result = sentiService.analyzeText("I hate frogs.", "scale", true, "max", "max");
         Assert.assertEquals("1 -4 -3 I hate[-4] frogs .[sentence: 1,-4] [result: max + and - of any sentence][scale result = sum of pos and neg scores]", result);
     }
 
@@ -69,7 +69,7 @@ public class SentiServiceTextTest {
     @Test
     public void textExceptionTest() {
         try {
-            sentiService.analyzeText("I hate frogs.", "error_type", true);
+            sentiService.analyzeText("I hate frogs.", "error_type", true, "max", "max");
         } catch (SentiException e) {
             log.info("The code should go here");
             Assert.assertEquals("1", String.valueOf(e.getCode()));

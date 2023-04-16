@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 /**
  * 文本测试类
@@ -29,9 +28,6 @@ public class SentiControllerTextTest {
 
     @Autowired
     private SentiController sentiController;
-
-    @Autowired
-    private WebApplicationContext context;
 
     private MockMvc mockMvc;
 
@@ -52,6 +48,8 @@ public class SentiControllerTextTest {
                         .param("text", "I hate frogs.")
                         .param("type", "default")
                         .param("explain", "false")
+                        .param("paragraphMode", "max")
+                        .param("sentenceMode", "max")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", "code").value(0))
@@ -72,6 +70,8 @@ public class SentiControllerTextTest {
                         .param("text", "I hate frogs.")
                         .param("type", "default")
                         .param("explain", "true")
+                        .param("paragraphMode", "max")
+                        .param("sentenceMode", "max")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", "code").value(0))
@@ -92,6 +92,8 @@ public class SentiControllerTextTest {
                         .param("text", "I hate frogs.")
                         .param("type", "trinary")
                         .param("explain", "false")
+                        .param("paragraphMode", "max")
+                        .param("sentenceMode", "max")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", "code").value(0))
@@ -112,6 +114,8 @@ public class SentiControllerTextTest {
                         .param("text", "I hate frogs.")
                         .param("type", "binary")
                         .param("explain", "false")
+                        .param("paragraphMode", "max")
+                        .param("sentenceMode", "max")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", "code").value(0))
@@ -132,6 +136,8 @@ public class SentiControllerTextTest {
                         .param("text", "I hate frogs.")
                         .param("type", "scale")
                         .param("explain", "true")
+                        .param("paragraphMode", "max")
+                        .param("sentenceMode", "max")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", "code").value(0))
@@ -146,7 +152,7 @@ public class SentiControllerTextTest {
     @Test
     public void textExceptionTest() {
         try {
-            sentiController.analyzeText("I hate frogs.", "error_type", true);
+            sentiController.analyzeText("I hate frogs.", "error_type", true, "max", "max");
         } catch (SentiException e) {
             log.info("The code should go here");
             Assert.assertEquals("1", String.valueOf(e.getCode()));

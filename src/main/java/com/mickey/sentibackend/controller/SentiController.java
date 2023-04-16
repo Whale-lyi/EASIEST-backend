@@ -32,32 +32,42 @@ public class SentiController {
 
     /**
      * 用于处理解析文本的请求
-     * @param text 待分析文本
-     * @param type 分析模式
-     * @param explain 是否需要解释
+     *
+     * @param text          待分析文本
+     * @param type          分析模式
+     * @param explain       是否需要解释
+     * @param paragraphMode 段落求值方案
+     * @param sentenceMode  句子求值方案
      * @return 分析结果
      */
     @PostMapping("/text")
     public Result<String> analyzeText(@RequestParam("text") String text,
                                       @RequestParam("type") String type,
-                                      @RequestParam("explain") Boolean explain) {
-        String result = sentiService.analyzeText(text, type, explain);
+                                      @RequestParam("explain") Boolean explain,
+                                      @RequestParam("paragraphMode") String paragraphMode,
+                                      @RequestParam("sentenceMode") String sentenceMode) {
+        String result = sentiService.analyzeText(text, type, explain, paragraphMode, sentenceMode);
         return Result.buildSuccess(result);
     }
 
     /**
      * 用于处理解析文件的请求
-     * @param file 待分析文件
-     * @param type 分析模式
-     * @param explain 是否需要解释
-     * @param annotatecol 需要分析评注的文本列
+     *
+     * @param file          待分析文件
+     * @param type          分析模式
+     * @param explain       是否需要解释
+     * @param annotateCol   需要分析评注的文本列
+     * @param paragraphMode 段落求值方案
+     * @param sentenceMode  句子求值方案
      * @return 分析结果
      */
     @PostMapping("/file")
     public Result<String> analyzeFile(@RequestParam("file") MultipartFile file,
                                       @RequestParam("type") String type,
                                       @RequestParam("explain") Boolean explain,
-                                      @RequestParam("annotatecol") String annotatecol,
+                                      @RequestParam("annotatecol") String annotateCol,
+                                      @RequestParam("paragraphMode") String paragraphMode,
+                                      @RequestParam("sentenceMode") String sentenceMode,
                                       HttpServletRequest request) {
         String filename = FileOps.s_ChopFileNameExtension(file.getOriginalFilename());
         String upload = request.getSession().getServletContext().getRealPath(filename + "upload");
@@ -67,7 +77,7 @@ public class SentiController {
             //创建目录
             createFile.mkdirs();
         }
-        String res = sentiService.analyzeFile(file, type, explain, annotatecol, upload);
+        String res = sentiService.analyzeFile(file, type, explain, annotateCol, upload, paragraphMode, sentenceMode);
         return Result.buildSuccess(res);
     }
 
