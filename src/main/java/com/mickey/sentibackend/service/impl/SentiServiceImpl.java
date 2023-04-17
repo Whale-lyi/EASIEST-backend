@@ -81,7 +81,7 @@ public class SentiServiceImpl implements SentiService {
         paramList.add("/home/lighthouse/SentStrength_Data/");
         paramList.add("input");
         paramList.add(path);
-        if (annotatecol != null && !annotatecol.equals("")) {
+        if (annotatecol != null && !"".equals(annotatecol)) {
             paramList.add("annotatecol");
             paramList.add(annotatecol);
         }
