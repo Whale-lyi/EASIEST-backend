@@ -12,6 +12,7 @@ build:
   artifacts:
     paths:
       - target/SentiStrength-backend-0.0.1-SNAPSHOT.jar
+    expire_in: 1 week
 
 release:
   stage: release
@@ -26,6 +27,7 @@ release:
   artifacts:
     paths:
       - target/SentiStrength-backend-0.0.1-SNAPSHOT.jar
+    expire_in: 1 week
   release:
     tag_name: 'v0.0.$CI_PIPELINE_IID'
     description: 'v0.0.$CI_PIPELINE_IID'
