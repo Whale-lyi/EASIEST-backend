@@ -40,10 +40,16 @@
         </dependency>
 
         <!--小组jar包-->
+<!--        迭代一jar包-->
+<!--        <dependency>-->
+<!--            <groupId>com.se.mickey</groupId>-->
+<!--            <artifactId>SentiStrength</artifactId>-->
+<!--            <version>2.0.0</version>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>com.se.mickey</groupId>
+            <groupId>cn.edu.nju.se3.2023.5</groupId>
             <artifactId>SentiStrength</artifactId>
-            <version>2.0.0</version>
+            <version>2.1.0</version>
         </dependency>
 
         <!--json-->
