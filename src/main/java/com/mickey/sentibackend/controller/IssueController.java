@@ -28,7 +28,8 @@ public class IssueController {
 
     @GetMapping("/get-issues")
     public Result<List<Issue>> getIssues(@RequestParam("url") String url,
-                                         @RequestParam("state") String state) {
-        return Result.buildSuccess(issueService.getIssues(url, state));
+                                         @RequestParam("state") String state,
+                                         @RequestParam("version") String version) {
+        return Result.buildSuccess(issueService.getIssues(url, state, version));
     }
 }
