@@ -13,7 +13,11 @@ public class Comment {
     /**
      * 评论的唯一编号
      */
-    private Long id;
+    private Long commentId;
+    /**
+     * issue id
+     */
+    private Long issueId;
     /**
      * 用户
      */
@@ -22,6 +26,10 @@ public class Comment {
      * 评论内容
      */
     private String body;
+    /**
+     * 评论分数
+     */
+    private Integer commentScore;
     /**
      * 创建时间
      */

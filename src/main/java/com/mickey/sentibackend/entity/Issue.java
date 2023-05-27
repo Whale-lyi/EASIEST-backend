@@ -22,11 +22,11 @@ public class Issue {
     /**
      * 标题
      */
-    private String title;
+    private IssueTitle title;
     /**
      * 内容
      */
-    private String body;
+    private List<IssueBody> bodyList;
     /**
      * 创建时间
      */
