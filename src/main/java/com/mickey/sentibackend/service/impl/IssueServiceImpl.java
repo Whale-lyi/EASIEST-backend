@@ -52,7 +52,8 @@ public class IssueServiceImpl implements IssueService {
         String apiURL = parseURL(url, state, version);
         log.info(apiURL);
         // 获取issue
-        JSONArray issues = JSON.parseArray(makeApiRequest(apiURL));
+        JSONArray issues = fetchAllRepositoryIssues(apiURL);
+        log.info(String.valueOf(issues.size()));
         // 按时间过滤
         if (timeByVersion[0] != null) {
             issues = filterJSONObjectByTime(issues);
@@ -142,6 +143,26 @@ public class IssueServiceImpl implements IssueService {
         // 处理连续换行
         processedText = processedText.replaceAll("(\r\n){2,}", "\r\n");
         return processedText;
+    }
+
+
+    private JSONArray fetchAllRepositoryIssues(String apiURL) {
+        int perPage = 100; // 每页请求的数量，最大为 100
+        int page = 1; // 当前页数
+        JSONArray resultArray = new JSONArray();
+        while (true) {
+            String url = apiURL + "&per_page=" + perPage + "&page=" + page;
+            String response = makeApiRequest(url);
+            JSONArray responseArray = JSON.parseArray(response); // 将返回的 JSON 数组类型字符串转换为 JSON 数组对象
+            resultArray.addAll(responseArray); // 将返回的 JSON 数据添加到结果中
+
+            // 判断当前页是否还有更多数据，如果没有则退出循环
+            if (responseArray.size() < perPage) {
+                break;
+            }
+            page++; // 请求下一页数据
+        }
+        return resultArray;
     }
 
     /**
