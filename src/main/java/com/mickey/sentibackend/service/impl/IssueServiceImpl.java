@@ -112,7 +112,7 @@ public class IssueServiceImpl implements IssueService {
                 .mapToObj(issues::getJSONObject)
                 .filter(issue -> {
                     Date createTime = parseDate(issue.getString("created_at"));
-                    return createTime.compareTo(parseDate(timeByVersion[0])) <= 0;
+                    return createTime.compareTo(parseDate(timeByVersion[0])) <= 0 && createTime.compareTo(parseDate(timeByVersion[1])) >= 0;
                 })
                 .collect(JSONArray::new, JSONArray::add, JSONArray::addAll);
     }
