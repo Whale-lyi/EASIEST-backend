@@ -12,8 +12,8 @@ public class SentiUtil {
         sentiStrength = new SentiStrength();
         ArrayList<String> paramList = new ArrayList<>();
         paramList.add("sentidata");
-        paramList.add("./src/main/resources/SentStrength_Data/");
-//        paramList.add("/home/lighthouse/SentStrength_Data/");
+//        paramList.add("./src/main/resources/SentStrength_Data/");
+        paramList.add("/home/lighthouse/SentStrength_Data/");
         paramList.add("trinary");
         String[] initArray = paramList.toArray(new String[0]);
         sentiStrength.initialise(initArray);
