@@ -27,6 +27,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -59,28 +63,46 @@ public class IssueServiceImpl implements IssueService {
             issues = filterJSONObjectByTime(issues);
         }
         List<Issue> issueList = new ArrayList<>();
+        List<Future<Issue>> futures = new ArrayList<>();
+        ExecutorService executor = Executors.newFixedThreadPool(4);
         for (int i = 0; i < issues.size(); i++) {
             // issue 部分
             JSONObject issue = issues.getJSONObject(i);
-            Long issueId = issue.getLong("number");
-            String userName = issue.getJSONObject("user").getString("login");
-            IssueTitle title = generateIssueTitle(issue.getString("title"));
-            List<IssueBody> issueBodyList = generateIssueBody(issue.getString("body"));
-            Date createTime = parseDate(issue.getString("created_at"));
+            final Long issueId = issue.getLong("number");
+            final String userName = issue.getJSONObject("user").getString("login");
+            final IssueTitle title = generateIssueTitle(issue.getString("title"));
+            final List<IssueBody> issueBodyList = generateIssueBody(issue.getString("body"));
+            final Date createTime = parseDate(issue.getString("created_at"));
             // 获取issue对应comment
-            List<Comment> commentList = new ArrayList<>();
             Integer commentNum = issue.getInteger("comments");
             if (commentNum > 0) {
-                String commentsURL = issue.getString("comments_url");
-                JSONArray comments = JSON.parseArray(makeApiRequest(commentsURL));
-                for (int j = 0; j < comments.size(); j++) {
-                    JSONObject comment = comments.getJSONObject(j);
-                    commentList.add(generateComment(comment, issueId));
-                }
+                final String commentsURL = issue.getString("comments_url");
+                // 并发请求
+                Future<Issue> future = executor.submit(() -> {
+                    JSONArray comments = JSON.parseArray(makeApiRequest(commentsURL));
+                    List<Comment> commentList = new ArrayList<>();
+                    for (int j = 0; j < comments.size(); j++) {
+                        JSONObject comment = comments.getJSONObject(j);
+                        commentList.add(generateComment(comment, issueId));
+                    }
+                    return new Issue(issueId, userName, title, issueBodyList, createTime, commentList);
+                });
+                futures.add(future);
+            } else {
+                issueList.add(new Issue(issueId, userName, title, issueBodyList, createTime, new ArrayList<>()));
             }
-
-            issueList.add(new Issue(issueId, userName, title, issueBodyList, createTime, commentList));
         }
+
+        for (Future<Issue> future : futures) {
+            try {
+                Issue issue = future.get();
+                issueList.add(issue);
+            } catch (ExecutionException | InterruptedException e) {
+                throw new SentiException(13, "并发错误");
+            }
+        }
+
+        executor.shutdown();
 
         return issueList;
     }
