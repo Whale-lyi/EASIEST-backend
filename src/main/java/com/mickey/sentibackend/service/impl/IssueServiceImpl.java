@@ -7,6 +7,8 @@ import com.mickey.sentibackend.entity.Comment;
 import com.mickey.sentibackend.entity.Issue;
 import com.mickey.sentibackend.entity.IssueBody;
 import com.mickey.sentibackend.entity.IssueTitle;
+import com.mickey.sentibackend.entity.MarkResult;
+import com.mickey.sentibackend.entity.Report;
 import com.mickey.sentibackend.exception.SentiException;
 import com.mickey.sentibackend.service.IssueService;
 import com.mickey.sentibackend.util.SentiUtil;
@@ -19,7 +21,13 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,6 +50,8 @@ public class IssueServiceImpl implements IssueService {
 
     private static final String API_BASE_URL = "https://api.github.com/repos/";
     private static final String ACCESS_TOKEN = "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";
+    private static final String MARK_FILE = "/home/lighthouse/mark_res.txt";
+    private static final String REPORT_FILE = "/home/lighthouse/Report.md";
     private String[] timeByVersion;
 
     /**
@@ -105,6 +115,31 @@ public class IssueServiceImpl implements IssueService {
         executor.shutdown();
 
         return issueList;
+    }
+
+    @Override
+    public Report getReport() {
+        // 获取标注结果
+        List<MarkResult> markResultList = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(MARK_FILE))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String aspect = line.substring(line.indexOf("【") + 1, line.indexOf("】"));
+                markResultList.add(new MarkResult(aspect, line));
+            }
+        } catch (FileNotFoundException e) {
+            throw new SentiException(14, "文件地址有误");
+        } catch (IOException e) {
+            throw new SentiException(15, "获取标注结果时发生IO异常");
+        }
+        // 读取报告内容
+        try {
+            Path filePath = Paths.get(REPORT_FILE); // 指定文件路径
+            byte[] content = Files.readAllBytes(filePath);
+            return new Report(markResultList, new String(content));
+        } catch (IOException e) {
+            throw new SentiException(16, "获取报告内容时发生IO异常");
+        }
     }
 
     private JSONArray filterJSONObjectByTime(JSONArray issues) {
