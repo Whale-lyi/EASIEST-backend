@@ -67,11 +67,9 @@ public class IssueServiceImpl implements IssueService {
         log.info(apiURL);
         // 获取issue
         JSONArray issues = fetchAllRepositoryIssues(apiURL);
-        log.info(String.valueOf(issues.size()));
         // 按时间过滤
-        if (timeByVersion[0] != null) {
-            issues = filterJSONObjectByTime(issues);
-        }
+        issues = filterJSONObjectByTime(issues);
+        log.info(String.valueOf(issues.size()));
         List<Issue> issueList = new ArrayList<>();
         List<Future<Issue>> futures = new ArrayList<>();
         ExecutorService executor = Executors.newFixedThreadPool(4);
@@ -143,13 +141,23 @@ public class IssueServiceImpl implements IssueService {
     }
 
     private JSONArray filterJSONObjectByTime(JSONArray issues) {
-        return IntStream.range(0, issues.size())
-                .mapToObj(issues::getJSONObject)
-                .filter(issue -> {
-                    Date createTime = parseDate(issue.getString("created_at"));
-                    return createTime.compareTo(parseDate(timeByVersion[0])) <= 0 && createTime.compareTo(parseDate(timeByVersion[1])) >= 0;
-                })
-                .collect(JSONArray::new, JSONArray::add, JSONArray::addAll);
+        if (timeByVersion[0] != null) {
+            return IntStream.range(0, issues.size())
+                    .mapToObj(issues::getJSONObject)
+                    .filter(issue -> {
+                        Date createTime = parseDate(issue.getString("created_at"));
+                        return createTime.compareTo(parseDate(timeByVersion[0])) <= 0 && createTime.compareTo(parseDate(timeByVersion[1])) >= 0;
+                    })
+                    .collect(JSONArray::new, JSONArray::add, JSONArray::addAll);
+        } else {
+            return IntStream.range(0, issues.size())
+                    .mapToObj(issues::getJSONObject)
+                    .filter(issue -> {
+                        Date createTime = parseDate(issue.getString("created_at"));
+                        return createTime.compareTo(parseDate(timeByVersion[1])) >= 0;
+                    })
+                    .collect(JSONArray::new, JSONArray::add, JSONArray::addAll);
+        }
     }
 
     private IssueTitle generateIssueTitle(String title) {
@@ -336,7 +344,7 @@ public class IssueServiceImpl implements IssueService {
             for (int i = 0; i < jsonList.size(); i++) {
                 JSONObject release = jsonList.get(i);
                 String releaseName = release.getString("name");
-                if (releaseName.equals(version)) {
+                if (version.equals(releaseName)) {
                     versionTime[0] = i == 0 ? null : releasesInfo.getJSONObject(i - 1).getString("published_at");
                     versionTime[1] = release.getString("published_at");
                     return versionTime;
