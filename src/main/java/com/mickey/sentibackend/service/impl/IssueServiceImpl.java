@@ -49,7 +49,7 @@ import java.util.stream.IntStream;
 public class IssueServiceImpl implements IssueService {
 
     private static final String API_BASE_URL = "https://api.github.com/repos/";
-    private static final String ACCESS_TOKEN = "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";
+    private static final String ACCESS_TOKEN = "your_token";
     private static final String MARK_FILE = "/home/lighthouse/mark_res.txt";
     private static final String REPORT_FILE = "/home/lighthouse/Report.md";
     private String[] timeByVersion;
